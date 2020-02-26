@@ -131,11 +131,14 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) {
 		ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
 		Executor executor = getTaskExecutor();
+		//获取到所有的监听器
 		for (ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+			//看spring 容器中是否支持线程池 异步发送事件
 			if (executor != null) {
 				executor.execute(() -> invokeListener(listener, event));
 			}
 			else {
+				//同步发送事件
 				invokeListener(listener, event);
 			}
 		}
@@ -169,6 +172,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void doInvokeListener(ApplicationListener listener, ApplicationEvent event) {
 		try {
+			//调用对于listener的onApplicationEvent事件
 			listener.onApplicationEvent(event);
 		}
 		catch (ClassCastException ex) {
