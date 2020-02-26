@@ -161,11 +161,13 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		this.registry = registry;
-
+        //使用默认的扫描规则
 		if (useDefaultFilters) {
 			registerDefaultFilters();
 		}
+		//设置环境变量
 		setEnvironment(environment);
+		//设置资源加载器
 		setResourceLoader(resourceLoader);
 	}
 
@@ -270,25 +272,36 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @return set of beans registered if any for tooling registration purposes (never {@code null})
 	 */
 	protected Set<BeanDefinitionHolder> doScan(String... basePackages) {
+		//使用扫描器去真正的扫描类,返回Set<BeanDefinitionHolder>
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
+		//创建一个Bean定义 holder的 set
 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
+		//循环扫描路径
 		for (String basePackage : basePackages) {
+			//找到候选的组件集合
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
+				//生成bean的名称
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
+				//判断是不是抽象的beand定义
 				if (candidate instanceof AbstractBeanDefinition) {
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
+				//注解的bean定义
 				if (candidate instanceof AnnotatedBeanDefinition) {
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
+				//检查当前的和存主的bean定义是否有冲
 				if (checkCandidate(beanName, candidate)) {
+					//把候选的组件封装成BeanDefinitionHolder
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+					//加入到bean定义的集合中
 					beanDefinitions.add(definitionHolder);
+					//注册当前的bean定义信息
 					registerBeanDefinition(definitionHolder, this.registry);
 				}
 			}
