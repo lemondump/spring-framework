@@ -316,6 +316,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 			try {
 				//合并父 BeanDefinition 与子 BeanDefinition，后面会单独分析这个方法
+				//xml bean的标签Abstract父子bean
 				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
 
