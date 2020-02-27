@@ -250,7 +250,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		/** * 设计的精髓
 		 * * 检查实例缓存中对象工厂缓存中是包含对象(从这里返回的可能是实例化好的,也有可能是没有实例化好的)
 		 * * 为什么要这段代码?
-		 * * 因为单实例bean创建可能存主依赖注入的情况，而为了解决循环依赖问题，在对象刚刚创建好(属性还没有赋值)
+		 * * 因为单实例bean创建可能存在依赖注入的情况，而为了解决循环依赖问题，在对象刚刚创建好(属性还没有赋值)
 		 * * 的时候，就会把对象包装为一个对象工厂暴露出去(加入到对象工厂缓存中),一但下一个bean要依赖他，就直接可以从缓存中获取.
 		 * */
 		// Eagerly check singleton cache for manually registered singletons.
