@@ -1190,6 +1190,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			Object result = getAutowireCandidateResolver().getLazyResolutionProxyIfNecessary(
 					descriptor, requestingBeanName);
 			if (result == null) {
+				//处理依赖，bytype多个会报错
 				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter);
 			}
 			return result;
@@ -1244,6 +1245,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			String autowiredBeanName;
 			Object instanceCandidate;
 
+			//bytype匹配的属性有多个，多个如果没有primary，priority注解注解会报错
 			if (matchingBeans.size() > 1) {
 				autowiredBeanName = determineAutowireCandidate(matchingBeans, descriptor);
 				if (autowiredBeanName == null) {
@@ -1512,10 +1514,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	@Nullable
 	protected String determineAutowireCandidate(Map<String, Object> candidates, DependencyDescriptor descriptor) {
 		Class<?> requiredType = descriptor.getDependencyType();
+		//是不是有primary注解
 		String primaryCandidate = determinePrimaryCandidate(candidates, requiredType);
 		if (primaryCandidate != null) {
 			return primaryCandidate;
 		}
+		//是不是有priority注解
 		String priorityCandidate = determineHighestPriorityCandidate(candidates, requiredType);
 		if (priorityCandidate != null) {
 			return priorityCandidate;

@@ -266,8 +266,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
 				}
 			}
-			/** 若从缓存中的sharedInstance是原始的bean(属性还没有进行实例化,那么在这里进行处理)
-			 * * 或者是factoryBean 返回的是工厂bean的而不是我们想要的getObject()返回的bean ,就会在这里处理
+			/**
+			 *   factoryBean 返回的是工厂bean的而不是我们想要的getObject()返回的bean ,就会在这里处理
 			 * */
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
@@ -1320,7 +1320,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						 * * 在父容器中。原因也很简单，容器底层是用 Map 缓存 <beanName, bean> 键值对
 						 * * 的。同一个容器下，使用同一个 beanName 映射两个 bean 实例显然是不合适的。
 						 * * 有的朋友可能会觉得可以这样存储：<beanName, [bean1, bean2]> ，似乎解决了
-						 * * 一对多的问题。但是也有问题，调用 getName(beanName) 时，到底返回哪个 bean
+						 * * 一对多的问题。但是也有问题，调用 getName(beanName) 时，到底返回哪个 bean1
 						 * * 实例好呢？
 						 * */
 						String parentBeanName = transformedBeanName(bd.getParentName());
