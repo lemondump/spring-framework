@@ -97,6 +97,7 @@ public abstract class AopConfigUtils {
 	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			BeanDefinitionRegistry registry, @Nullable Object source) {
 
+		//注册一个AnnotationAwareAspectJAutoProxyCreator（注解适配的切面自动创建器）
 		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
 	}
 
@@ -120,6 +121,7 @@ public abstract class AopConfigUtils {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 
+		//判断容器中有没有org.springframework.aop.config.internalAutoProxyCreator 名称的bean定义
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
 			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
@@ -132,6 +134,8 @@ public abstract class AopConfigUtils {
 			return null;
 		}
 
+		//容器中没有 那么就注册一个名称叫org.springframework.aop.config.internalAutoProxyCreator
+		// 类型是AnnotationAwareAspectJAutoProxyCreator
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);

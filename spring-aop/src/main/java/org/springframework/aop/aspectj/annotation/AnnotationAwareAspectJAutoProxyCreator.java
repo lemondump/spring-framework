@@ -47,6 +47,9 @@ import org.springframework.util.Assert;
  * @see org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory
  */
 @SuppressWarnings("serial")
+//AnnotationAwareAspectJAutoProxyCreator  实现了BeanFactoryAware 也是做了二个事情
+//事情1:把Beanfactory 保存到AnnotationAwareAspectJAutoProxyCreator  组件上.
+//事情2: 为AnnotationAwareAspectJAutoProxyCreator 的aspectJAdvisorsBuilder  aspect增强器构建器赋值
 public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorAutoProxyCreator {
 
 	@Nullable
@@ -76,11 +79,14 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	}
 
 	@Override
+	//创建一个aop的增强器通过@Apsectj注解的方式.
 	protected void initBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 		super.initBeanFactory(beanFactory);
+		//若 apsectj的增强器工厂对象为空,我们就创建一个ReflectiveAspectJAdvisorFactory
 		if (this.aspectJAdvisorFactory == null) {
 			this.aspectJAdvisorFactory = new ReflectiveAspectJAdvisorFactory(beanFactory);
 		}
+		//不为空 我们就把aspectJAdvisorFactory 包装为BeanFactoryAspectJAdvisorsBuilderAdapter
 		this.aspectJAdvisorsBuilder =
 				new BeanFactoryAspectJAdvisorsBuilderAdapter(beanFactory, this.aspectJAdvisorFactory);
 	}
@@ -89,8 +95,10 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	@Override
 	protected List<Advisor> findCandidateAdvisors() {
 		// Add all the Spring advisors found according to superclass rules.
+		//调用父类获取增强器
 		List<Advisor> advisors = super.findCandidateAdvisors();
 		// Build Advisors for all AspectJ aspects in the bean factory.
+		//解析 @Aspect 注解，并构建通知器
 		if (this.aspectJAdvisorsBuilder != null) {
 			advisors.addAll(this.aspectJAdvisorsBuilder.buildAspectJAdvisors());
 		}

@@ -55,14 +55,19 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		// but we need to preserve order in the ultimate list.
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
 		Advisor[] advisors = config.getAdvisors();
+		//创建拦截器集合长度是增强器的长度
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
 
+		//遍历所有的增强器集合
 		for (Advisor advisor : advisors) {
+			//判断增强器是不是PointcutAdvisor
 			if (advisor instanceof PointcutAdvisor) {
 				// Add it conditionally.
+				//把增强器转为PointcutAdvisor
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
+				//通过方法匹配器对增强器进行匹配
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
@@ -75,7 +80,9 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					else {
 						match = mm.matches(method, actualClass);
 					}
+					//能够匹配
 					if (match) {
+						//把增强器转为拦截器
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method

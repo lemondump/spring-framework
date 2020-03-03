@@ -80,33 +80,48 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
+	//第一步:先从增强器缓存中获取增强器对象
+	//  判断缓存中有没有增强器对象,有，那么直接从缓存中直接获取返回出去
+	//  没有.....从容器中获取所有的beanName
+	//  遍历上一步获取所有的beanName,通过beanName获取beanType
+	//  根据beanType判断当前bean是否是一个的Aspect注解类，若不是则不做任何处理
+	//  调用advisorFactory.getAdvisors获取通知器
 	public List<Advisor> buildAspectJAdvisors() {
+		//先从缓存中获取
 		List<String> aspectNames = this.aspectBeanNames;
-
+		//缓存中没有获取到
 		if (aspectNames == null) {
 			synchronized (this) {
+				//在尝试从缓存中获取一次
 				aspectNames = this.aspectBeanNames;
+				//还是没有获取到
 				if (aspectNames == null) {
+					//从容器中获取所有的bean的name
 					List<Advisor> advisors = new ArrayList<>();
 					aspectNames = new ArrayList<>();
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
+					//遍历beanNames
 					for (String beanName : beanNames) {
 						if (!isEligibleBean(beanName)) {
 							continue;
 						}
 						// We must be careful not to instantiate beans eagerly as in this case they
 						// would be cached by the Spring container but would not have been weaved.
+						//根据beanName获取bean的类型
 						Class<?> beanType = this.beanFactory.getType(beanName);
 						if (beanType == null) {
 							continue;
 						}
+						//检查beanType是否包含Aspect
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
+							//创建一饿Aspect类的源信息对象
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								//从aspectj中获取通知器
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
 									this.advisorsCache.put(beanName, classAdvisors);
@@ -135,9 +150,12 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 			}
 		}
 
+		//返回空
 		if (aspectNames.isEmpty()) {
 			return Collections.emptyList();
 		}
+
+		//缓存中有增强器，我们从缓存中获取返回出去
 		List<Advisor> advisors = new ArrayList<>();
 		for (String aspectName : aspectNames) {
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);

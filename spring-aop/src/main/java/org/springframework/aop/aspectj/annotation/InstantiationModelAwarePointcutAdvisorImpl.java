@@ -80,6 +80,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	private Boolean isAfterAdvice;
 
 
+	//把切点，候选的方法....统一处理生成一个增强器
 	public InstantiationModelAwarePointcutAdvisorImpl(AspectJExpressionPointcut declaredPointcut,
 			Method aspectJAdviceMethod, AspectJAdvisorFactory aspectJAdvisorFactory,
 			MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
@@ -110,6 +111,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 			// A singleton aspect.
 			this.pointcut = this.declaredPointcut;
 			this.lazy = false;
+			//实例化切面
 			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut);
 		}
 	}
