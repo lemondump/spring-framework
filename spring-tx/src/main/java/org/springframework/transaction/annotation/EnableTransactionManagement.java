@@ -167,6 +167,10 @@ public @interface EnableTransactionManagement {
 	 * time. This approach has no negative impact in practice unless one is explicitly
 	 * expecting one type of proxy vs another, e.g. in tests.
 	 */
+
+	/**
+	 * 指定使用什么代理模式(true为cglib代理,false 为jdk代理)
+	 * */
 	boolean proxyTargetClass() default false;
 
 	/**
@@ -179,6 +183,9 @@ public @interface EnableTransactionManagement {
 	 * scenario. For a more advanced mode of interception, consider switching this to
 	 * {@link AdviceMode#ASPECTJ}.
 	 */
+	/**
+	 * 通知模式 是使用代理模式还是aspectj  我们一般使用Proxy
+	 * */
 	AdviceMode mode() default AdviceMode.PROXY;
 
 	/**

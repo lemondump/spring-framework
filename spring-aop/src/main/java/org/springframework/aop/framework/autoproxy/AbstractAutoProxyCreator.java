@@ -212,6 +212,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * May be {@code null}, as this post-processor doesn't need to belong to a bean factory.
 	 */
 	@Nullable
+	//a：把我们的BeanFacotry容器设置到了InfrastructureAdvisorAutoProxyCreator组件中去
+	//b:  创建了一个advisorRetrievalHelper组件,增强器检索工具
 	protected BeanFactory getBeanFactory() {
 		return this.beanFactory;
 	}

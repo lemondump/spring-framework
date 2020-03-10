@@ -135,7 +135,7 @@ public abstract class AopConfigUtils {
 		}
 
 		//容器中没有 那么就注册一个名称叫org.springframework.aop.config.internalAutoProxyCreator
-		// 类型是AnnotationAwareAspectJAutoProxyCreator
+		// 类型是AnnotationAwareAspectJAutoProxyCreator或者其他类别
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
