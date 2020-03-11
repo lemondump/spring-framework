@@ -95,11 +95,14 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 		}
 
 		// First, see if we have a cached value.
+		//通过目标类和目标类的接口方法 拼接缓存key
 		Object cacheKey = getCacheKey(method, targetClass);
+		//去缓存中获取
 		TransactionAttribute cached = this.attributeCache.get(cacheKey);
 		if (cached != null) {
 			// Value will either be canonical value indicating there is no transaction attribute,
 			// or an actual transaction attribute.
+			//缓存中有 直接返回就可以了
 			if (cached == NULL_TRANSACTION_ATTRIBUTE) {
 				return null;
 			}
@@ -109,19 +112,24 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 		}
 		else {
 			// We need to work it out.
+			//计算事物属性.
 			TransactionAttribute txAttr = computeTransactionAttribute(method, targetClass);
 			// Put it in the cache.
+			//若事物属性为空.
 			if (txAttr == null) {
+				//在缓存中标识 为事物方法
 				this.attributeCache.put(cacheKey, NULL_TRANSACTION_ATTRIBUTE);
 			}
 			else {
 				String methodIdentification = ClassUtils.getQualifiedMethodName(method, targetClass);
+				//为事物属性设置方法描述符号
 				if (txAttr instanceof DefaultTransactionAttribute) {
 					((DefaultTransactionAttribute) txAttr).setDescriptor(methodIdentification);
 				}
 				if (logger.isTraceEnabled()) {
 					logger.trace("Adding transactional method '" + methodIdentification + "' with attribute: " + txAttr);
 				}
+				//加入到缓存
 				this.attributeCache.put(cacheKey, txAttr);
 			}
 			return txAttr;
@@ -148,30 +156,41 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 	 * @see #getTransactionAttribute
 	 */
 	@Nullable
+	/**
+	 * 计算事物属性
+	 * */
 	protected TransactionAttribute computeTransactionAttribute(Method method, @Nullable Class<?> targetClass) {
 		// Don't allow no-public methods as required.
+		//判断方法的修饰符
 		if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
 			return null;
 		}
 
 		// The method may be on an interface, but we need attributes from the target class.
 		// If the target class is null, the method will be unchanged.
+		/**
+		 * method为接口中的方法,specificMethod为我们实现类方法
+		 * */
 		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 
 		// First try is the method in the target class.
+		// 找我们【实现类】中的【方法】上的事物属性
 		TransactionAttribute txAttr = findTransactionAttribute(specificMethod);
 		if (txAttr != null) {
 			return txAttr;
 		}
 
 		// Second try is the transaction attribute on the target class.
+		//【方法所在类】上有没有事物属性
 		txAttr = findTransactionAttribute(specificMethod.getDeclaringClass());
 		if (txAttr != null && ClassUtils.isUserLevelMethod(method)) {
 			return txAttr;
 		}
 
+		//【接口上的指定的方法】
 		if (specificMethod != method) {
 			// Fallback is to look at the original method.
+			//【接口上】
 			txAttr = findTransactionAttribute(method);
 			if (txAttr != null) {
 				return txAttr;

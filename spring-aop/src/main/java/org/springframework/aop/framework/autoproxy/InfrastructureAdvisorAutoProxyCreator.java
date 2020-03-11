@@ -41,6 +41,10 @@ public class InfrastructureAdvisorAutoProxyCreator extends AbstractAdvisorAutoPr
 	}
 
 	@Override
+	/**
+	 * 判断包含是否为合适的最终逻辑
+	 * 容器中的bean定义包含当前的增强器的bean定义，且bean的role是int ROLE_INFRASTRUCTURE = 2;
+	 * */
 	protected boolean isEligibleAdvisorBean(String beanName) {
 		return (this.beanFactory != null && this.beanFactory.containsBeanDefinition(beanName) &&
 				this.beanFactory.getBeanDefinition(beanName).getRole() == BeanDefinition.ROLE_INFRASTRUCTURE);

@@ -221,6 +221,9 @@ public abstract class AopUtils {
 	 * for this bean includes any introductions
 	 * @return whether the pointcut can apply on any method
 	 */
+	/**
+	 * 判断当前增强器是否为本来能用的
+	 * */
 	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
 		Assert.notNull(pc, "Pointcut must not be null");
 		if (!pc.getClassFilter().matches(targetClass)) {
@@ -228,6 +231,10 @@ public abstract class AopUtils {
 		}
 
 		//创建一个方法匹配器
+		/**
+		 * 获取切点中的方法匹配器 TransactionAttributeSourcePointcut
+		 * 该切点在创建BeanFactoryTransactionAttributeSourceAdvisor的时候 创建了切点TransactionAttributeSourcePointcut
+		 * */
 		MethodMatcher methodMatcher = pc.getMethodMatcher();
 		if (methodMatcher == MethodMatcher.TRUE) {
 			// No need to iterate the methods if we're matching any method anyway...
@@ -235,12 +242,16 @@ public abstract class AopUtils {
 		}
 
 		//包装方法匹配器
+		/**
+		 * 判断方法匹配器是不是IntroductionAwareMethodMatcher
+		 * */
 		IntroductionAwareMethodMatcher introductionAwareMethodMatcher = null;
 		if (methodMatcher instanceof IntroductionAwareMethodMatcher) {
 			introductionAwareMethodMatcher = (IntroductionAwareMethodMatcher) methodMatcher;
 		}
 
 		//获取本来和接口
+		//获取当前类的实现接口类型
 		Set<Class<?>> classes = new LinkedHashSet<>();
 		if (!Proxy.isProxyClass(targetClass)) {
 			classes.add(ClassUtils.getUserClass(targetClass));
@@ -251,6 +262,7 @@ public abstract class AopUtils {
 			//获取所有的方法 进行匹配
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
 			for (Method method : methods) {
+				//正在进行匹配的是methodMatcher.matches(method, targetClass)这个逻辑
 				if (introductionAwareMethodMatcher != null ?
 						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions) :
 						methodMatcher.matches(method, targetClass)) {
@@ -286,10 +298,13 @@ public abstract class AopUtils {
 	 */
 	//判断是当前的增强器是否能用 通过方法匹配来计算当前是否合适当前类的增强器
 	public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) {
+		//根据类的继承图 发现 BeanFactoryTransactionAttributeSourceAdvisor没实现IntroductionAdvisor接口
 		if (advisor instanceof IntroductionAdvisor) {
 			return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
 		}
+		//BeanFactoryTransactionAttributeSourceAdvisor实现了PointcutAdvisor接口
 		else if (advisor instanceof PointcutAdvisor) {
+			//强制转换为PointcutAdvisor
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
 			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
 		}
@@ -315,6 +330,7 @@ public abstract class AopUtils {
 		List<Advisor> eligibleAdvisors = new ArrayList<>();
 		//遍历候选的增强器 把他增加到eligibleAdvisors集合中返回
 		for (Advisor candidate : candidateAdvisors) {
+			//判断增强器是不是实现了IntroductionAdvisor  很明显没实现该接口
 			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
 				eligibleAdvisors.add(candidate);
 			}
@@ -325,6 +341,7 @@ public abstract class AopUtils {
 				// already processed
 				continue;
 			}
+			//正在找出能用的增强器
 			if (canApply(candidate, clazz, hasIntroductions)) {
 				eligibleAdvisors.add(candidate);
 			}

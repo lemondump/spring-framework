@@ -37,11 +37,18 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 @Configuration
 public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration {
 
+	/**
+	 * 为我我们容器中导入了 beanName为org.springframework.transaction.config.internalTransactionAdvisor
+	 * 类型为:BeanFactoryTransactionAttributeSourceAdvisor 的增强器
+	 *
+	 * */
 	@Bean(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor() {
 		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
+		//设置了事物源属性对象
 		advisor.setTransactionAttributeSource(transactionAttributeSource());
+		//设置了事物拦截器对象
 		advisor.setAdvice(transactionInterceptor());
 		if (this.enableTx != null) {
 			advisor.setOrder(this.enableTx.<Integer>getNumber("order"));
@@ -49,17 +56,26 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 		return advisor;
 	}
 
+	/**
+	 * 定义了一个事物属性源对象
+	 * */
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionAttributeSource transactionAttributeSource() {
 		return new AnnotationTransactionAttributeSource();
 	}
 
+	/**
+	 * 事物拦截器对象
+	 *
+	 * */
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public TransactionInterceptor transactionInterceptor() {
 		TransactionInterceptor interceptor = new TransactionInterceptor();
+		// * 把事物属性源对象设置到我们的事物拦截器对象中
 		interceptor.setTransactionAttributeSource(transactionAttributeSource());
+		//把我们容器中的 事物对象配置到事物拦截器中
 		if (this.txManager != null) {
 			interceptor.setTransactionManager(this.txManager);
 		}
