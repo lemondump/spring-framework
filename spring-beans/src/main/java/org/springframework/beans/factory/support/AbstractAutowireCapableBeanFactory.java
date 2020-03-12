@@ -495,6 +495,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Prepare method overrides.
+		//验证及准备覆盖的方法
+		//配置中的lookup-method和replace-method是放在method overrides属性中的，这个是针对这个配置
+		//在实例化bean的时候，如果检测到存在method overrides会动态的为当前bean生成代理并使用对应的
+		//拦截器为bean做增强处理，如果一个类中有多个重载方法，那么在函数调用或者增强的时候需要
+		//确认到底哪个幻术 但是如果当前类的方法只有一个，那么就设置重载该方法没有被重载，在后续调用的
+		//时候可直接使用找到的方法，不需要进行参数匹配验证了，而且还可以提前对方法存在性进行验证
 		try {
 			mbdToUse.prepareMethodOverrides();
 		}
@@ -508,6 +514,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			//给bean的后置处理器一个机会来生成一个代理对象返回,在aop模块进行详细讲解
 			//没有进行实际的aop代理，对象都没有，代理个锤子，缓存切面
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
+			//断路判断，如果上个方法返回bean了就不用创建bean了
 			if (bean != null) {
 				return bean;
 			}
@@ -1116,6 +1123,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	@Nullable
 	protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
 		Object bean = null;
+		//如果尚未被解析
 		if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
 			// Make sure bean class is actually resolved at this point.
 			if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {

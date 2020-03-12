@@ -380,6 +380,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				else {
+					//指定的scope上实例化bean
 					String scopeName = mbd.getScope();
 					final Scope scope = this.scopes.get(scopeName);
 					if (scope == null) {
@@ -412,6 +413,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 
 		// Check if required type matches the type of the actual bean instance.
+		//检查需要的类型是否符合bean的实际类型
 		if (requiredType != null && !requiredType.isInstance(bean)) {
 			try {
 				T convertedBean = getTypeConverter().convertIfNecessary(bean, requiredType);
@@ -1744,6 +1746,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				//合并我们的bean定义
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
+			//是否是应用程序定义的而不是系统定义的
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
 			// 调用 getObjectFromFactoryBean 方法继续获取实例
 			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
