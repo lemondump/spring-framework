@@ -78,6 +78,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = ((IntroductionAwareMethodMatcher) mm).matches(method, actualClass, hasIntroductions);
 					}
 					else {
+						//事务的是TransactionAttributeSourcePointcut
 						match = mm.matches(method, actualClass);
 					}
 					//能够匹配

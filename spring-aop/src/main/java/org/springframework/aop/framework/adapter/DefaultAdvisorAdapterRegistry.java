@@ -80,6 +80,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 		List<MethodInterceptor> interceptors = new ArrayList<>(3);
 		Advice advice = advisor.getAdvice();
 		if (advice instanceof MethodInterceptor) {
+			//事务拦截器是MethodInterceptor
 			interceptors.add((MethodInterceptor) advice);
 		}
 		for (AdvisorAdapter adapter : this.adapters) {

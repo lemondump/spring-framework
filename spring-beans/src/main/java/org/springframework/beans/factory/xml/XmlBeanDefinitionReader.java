@@ -301,6 +301,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	@Override
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
+		//资源编码形势的封装
 		return loadBeanDefinitions(new EncodedResource(resource));
 	}
 
@@ -317,6 +318,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			logger.trace("Loading XML bean definitions from " + encodedResource);
 		}
 
+		//通过属性记录已经加载的资源
 		Set<EncodedResource> currentResources = this.resourcesCurrentlyBeingLoaded.get();
 		if (currentResources == null) {
 			currentResources = new HashSet<>(4);
@@ -444,6 +446,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see #detectValidationMode
 	 */
 	protected int getValidationModeForResource(Resource resource) {
+		//判断xml的校验格式 dtd or xsd 如果指定了就读取指定的 否则自动检测
 		int validationModeToUse = getValidationMode();
 		if (validationModeToUse != VALIDATION_AUTO) {
 			return validationModeToUse;
@@ -508,9 +511,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see BeanDefinitionDocumentReader#registerBeanDefinitions
 	 */
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+		//实例化documentReader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+		//取得加载注册bean定义之前的数量
 		int countBefore = getRegistry().getBeanDefinitionCount();
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+		//加载注册的数量
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
 
