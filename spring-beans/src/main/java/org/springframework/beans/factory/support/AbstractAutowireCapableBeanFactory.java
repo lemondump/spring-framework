@@ -608,6 +608,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						"' to allow for resolving potential circular references");
 			}
 			//暴露早期对象到缓存中用于解决依赖的。
+			//AOP在此处将advise动态织入到bean中，若没有就直接返回，不做处理
+			// (SmartInstantiationAwareBeanPostProcessor目前没有使用这个类，应该没有在这边暴露，相关暴露放内存，上边已经
+			// 处理过了)
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
@@ -640,11 +643,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
+					//检检测依赖
 					for (String dependentBean : dependentBeans) {
 						if (!removeSingletonIfCreatedForTypeCheckOnly(dependentBean)) {
 							actualDependentBeans.add(dependentBean);
 						}
 					}
+					//bean创建完正常所有依赖的bean都已经创建好了，actualDependentBeans如果不为空表示并没有
+					//创建好，存在循环依赖
 					if (!actualDependentBeans.isEmpty()) {
 						throw new BeanCurrentlyInCreationException(beanName,
 								"Bean with name '" + beanName + "' has been injected into other beans [" +
