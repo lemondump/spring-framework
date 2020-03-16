@@ -1440,7 +1440,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
-		//上面返回为flase 表示你已经通过自己写的InstantiationAwareBeanPostProcessor 类型的处理器已经设置过bean的属性值了,不
+		//上面返回为flase 表示你已经通过自己写的InstantiationAwareBeanPostProcessor 类型的处理器已经设置过bean的属性值了
+		// ,不需要再处理了
 		if (!continueWithPropertyPopulation) {
 			return;
 		}
@@ -1510,6 +1511,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				//过滤出所有需要进行依赖检查的属性编辑器 并且进行缓存起来
 				filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
 			}
+
+			//依赖检查，对应depends-on属性，3.0已经弃用此属性
 			checkDependencies(beanName, mbd, filteredPds, pvs);
 		}
 
@@ -1614,6 +1617,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					// 创建依赖描述对象
 					DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
 					//过程比较复杂，先把这里看成一个黑盒，我们只要知道这个方法可以帮我们解析出合适的依赖即可
+					//解析指定baanname的属性所匹配的值，并把解析到的属性名称存储在autowiredBeanNames中，当属性中存在多
+					//个封装的bean 比如 注入的是属性A的list，则会将找到的所有匹配的A类型的bean都注入
 					Object autowiredArgument = resolveDependency(desc, beanName, autowiredBeanNames, converter);
 					if (autowiredArgument != null) {
 						// 将解析出的 bean 存入到属性值列表（pvs）中

@@ -128,8 +128,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 		}
 		try {
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
+			//为序列化指定id，如需要，让这个beanfactory从id反序列化到beanfactory对象
 			beanFactory.setSerializationId(getId());
+			//设置beanfactory的属性，是否支持覆盖同名称不同定义的对象，及循环依赖等问题
 			customizeBeanFactory(beanFactory);
+			//TODO springBoot？？？
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
@@ -223,9 +226,11 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
 		if (this.allowBeanDefinitionOverriding != null) {
+			//同名覆盖是否允许
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}
 		if (this.allowCircularReferences != null) {
+			//循环依赖是否允许
 			beanFactory.setAllowCircularReferences(this.allowCircularReferences);
 		}
 	}
