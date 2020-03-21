@@ -103,6 +103,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							this.beanFactory, Object.class, true, false);
 					//遍历beanNames
 					for (String beanName : beanNames) {
+						//不合法的bean就跳过
 						if (!isEligibleBean(beanName)) {
 							continue;
 						}

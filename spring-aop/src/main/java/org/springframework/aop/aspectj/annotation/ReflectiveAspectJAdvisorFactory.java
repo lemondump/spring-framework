@@ -133,12 +133,14 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		}
 
 		// If it's a per target aspect, emit the dummy instantiating aspect.
+		//如果增强器不为空且为懒加载，则需要再首位加入同步实例化增强器
 		if (!advisors.isEmpty() && lazySingletonAspectInstanceFactory.getAspectMetadata().isLazilyInstantiated()) {
 			Advisor instantiationAdvisor = new SyntheticInstantiationAdvisor(lazySingletonAspectInstanceFactory);
 			advisors.add(0, instantiationAdvisor);
 		}
 
 		// Find introduction fields.
+		//引介增强
 		for (Field field : aspectClass.getDeclaredFields()) {
 			Advisor advisor = getDeclareParentsAdvisor(field);
 			if (advisor != null) {
@@ -324,6 +326,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 	@SuppressWarnings("serial")
 	protected static class SyntheticInstantiationAdvisor extends DefaultPointcutAdvisor {
 
+		//目标方法前调用类似于before
 		public SyntheticInstantiationAdvisor(final MetadataAwareAspectInstanceFactory aif) {
 			super(aif.getAspectMetadata().getPerClausePointcut(), (MethodBeforeAdvice)
 					(method, args, target) -> aif.getAspectInstance());

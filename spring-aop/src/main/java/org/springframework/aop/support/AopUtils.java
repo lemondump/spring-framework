@@ -331,6 +331,7 @@ public abstract class AopUtils {
 		//遍历候选的增强器 把他增加到eligibleAdvisors集合中返回
 		for (Advisor candidate : candidateAdvisors) {
 			//判断增强器是不是实现了IntroductionAdvisor  很明显没实现该接口
+			//引介增强
 			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
 				eligibleAdvisors.add(candidate);
 			}

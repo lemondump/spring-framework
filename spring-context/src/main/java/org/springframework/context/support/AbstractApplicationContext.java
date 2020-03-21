@@ -533,10 +533,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 				// Invoke factory processors registered as beans in the context.
 				//激活beanfactory的处理器
+				//有实际的激活操作，所以硬编码的也进行了处理
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
 				//注册拦截bean创建bean的处理器，这里只是注册，真正的调用在getbean
+				//注册bean processors
+				//由于只是注册，所以没有考虑硬编码的BeanPostProcessors
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -905,6 +908,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.setTempClassLoader(null);
 
 		// Allow for caching all bean definition metadata, not expecting further changes.
+		//冻结所有的bean定义，说明注册的bean定义将不被修改或者进一步处理
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
@@ -927,6 +931,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		getLifecycleProcessor().onRefresh();
 
 		// Publish the final event.
+		//发布事件，applicationcontext初始化完成
 		publishEvent(new ContextRefreshedEvent(this));
 
 		// Participate in LiveBeansView MBean, if active.
