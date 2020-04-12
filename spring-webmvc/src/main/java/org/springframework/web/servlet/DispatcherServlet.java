@@ -1107,6 +1107,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 			else {
 				Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null);
+				//异常处理
 				mv = processHandlerException(request, response, handler, exception);
 				errorView = (mv != null);
 			}

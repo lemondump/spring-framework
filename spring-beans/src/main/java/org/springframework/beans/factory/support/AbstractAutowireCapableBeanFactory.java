@@ -609,8 +609,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			//暴露早期对象到缓存中用于解决依赖的。
 			//AOP在此处将advise动态织入到bean中，若没有就直接返回，不做处理
-			// (SmartInstantiationAwareBeanPostProcessor目前没有使用这个类，应该没有在这边暴露，相关暴露放内存，上边已经
-			// 处理过了)
+			//三级缓存的话，getFactory做了后置处理器的一个处理 封装aop等操作，所以3级缓存比较好，
+			//这个耗性能，不直接处理，需要的时候在取得对象，取得后在放入缓存中
+			//等同于如下代码
+			//addSingletonFactory(beanName, new ObjectFactory<Object>() {
+			//				@Override
+			//				public Object getObject() throws BeansException {
+			//					return getEarlyBeanReference(beanName, mbd, bean);
+			//				}
+			//			});
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 

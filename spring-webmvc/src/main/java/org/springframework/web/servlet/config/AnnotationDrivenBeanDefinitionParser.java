@@ -201,6 +201,7 @@ class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
 
 		RuntimeBeanReference contentNegotiationManager = getContentNegotiationManager(element, source, context);
 
+		//BeanDefinition注册RequestMappingHandlerMapping
 		RootBeanDefinition handlerMappingDef = new RootBeanDefinition(RequestMappingHandlerMapping.class);
 		handlerMappingDef.setSource(source);
 		handlerMappingDef.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
@@ -237,6 +238,7 @@ class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
 		ManagedList<?> callableInterceptors = getCallableInterceptors(element, source, context);
 		ManagedList<?> deferredResultInterceptors = getDeferredResultInterceptors(element, source, context);
 
+		//BeanDefinition注册RequestMappingHandlerMapping
 		RootBeanDefinition handlerAdapterDef = new RootBeanDefinition(RequestMappingHandlerAdapter.class);
 		handlerAdapterDef.setSource(source);
 		handlerAdapterDef.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);

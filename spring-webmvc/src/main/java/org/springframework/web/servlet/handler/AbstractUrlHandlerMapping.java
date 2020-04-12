@@ -349,18 +349,21 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 			}
 		}
 		else {
+			//root Mapping根路径
 			if (urlPath.equals("/")) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Root mapping to " + getHandlerDescription(handler));
 				}
 				setRootHandler(resolvedHandler);
 			}
+			//default mapping 默认路径
 			else if (urlPath.equals("/*")) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Default mapping to " + getHandlerDescription(handler));
 				}
 				setDefaultHandler(resolvedHandler);
 			}
+			//正常的mapping
 			else {
 				this.handlerMap.put(urlPath, resolvedHandler);
 				if (logger.isTraceEnabled()) {

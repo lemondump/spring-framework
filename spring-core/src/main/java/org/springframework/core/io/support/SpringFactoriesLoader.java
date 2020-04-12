@@ -117,6 +117,7 @@ public final class SpringFactoriesLoader {
 	 * @throws IllegalArgumentException if an error occurs while loading factory names
 	 * @see #loadFactories
 	 */
+	//加载配置类
 	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
 		String factoryTypeName = factoryType.getName();
 		return loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());
@@ -129,10 +130,12 @@ public final class SpringFactoriesLoader {
 		}
 
 		try {
+			//"META-INF/spring.factories" 去类路径下该文件中加载 配置
 			Enumeration<URL> urls = (classLoader != null ?
 					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
 					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
 			result = new LinkedMultiValueMap<>();
+			//遍历解析出来的集合
 			while (urls.hasMoreElements()) {
 				URL url = urls.nextElement();
 				UrlResource resource = new UrlResource(url);

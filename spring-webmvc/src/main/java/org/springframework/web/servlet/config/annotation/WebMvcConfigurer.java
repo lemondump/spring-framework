@@ -44,6 +44,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  * @author David Syer
  * @since 3.1
  */
+//WebMvcConfigurerAdapter弃用，springboot通过它注册拦截器
+// 如果用WebMvcConfigurationSupport会使WebMvcAutoConfiguration类失效，某些静态资源不能加载
 public interface WebMvcConfigurer {
 
 	/**

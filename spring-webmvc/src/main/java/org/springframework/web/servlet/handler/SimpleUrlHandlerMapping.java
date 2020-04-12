@@ -100,6 +100,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * superclass's initialization.
 	 */
 	@Override
+	//初始化，注册handler
 	public void initApplicationContext() throws BeansException {
 		super.initApplicationContext();
 		registerHandlers(this.urlMap);

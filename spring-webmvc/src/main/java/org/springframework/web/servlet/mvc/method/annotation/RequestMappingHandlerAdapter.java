@@ -851,6 +851,10 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
+			//3.InvocableHandlerMethod：Control目标对象，包含了control Bean 及对应的method 对像，及调用方法
+			//a. HandlerMethodArgumentResolverComposite：参数处理器
+			//b. ParameterNameDiscoverer：参数名称处理器
+			// HandlerMethodReturnValueHandlerComposite：返回结构处理器
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 			if (this.argumentResolvers != null) {
 				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);

@@ -99,5 +99,6 @@ import org.springframework.context.annotation.Import;
 @Target(ElementType.TYPE)
 @Documented
 @Import(DelegatingWebMvcConfiguration.class)
+//全面接管springboot的mvc配置(让springboot给我们自动配置的功能失效,自己像如何整合ssm一样的整合springmvc)
 public @interface EnableWebMvc {
 }

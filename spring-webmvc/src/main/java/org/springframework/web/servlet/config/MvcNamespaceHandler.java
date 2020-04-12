@@ -27,6 +27,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @author Sebastien Deleuze
  * @since 3.0
  */
+//命名空间处理
 public class MvcNamespaceHandler extends NamespaceHandlerSupport {
 
 	@Override

@@ -174,6 +174,8 @@ import javax.servlet.ServletException;
  * @see org.springframework.web.servlet.support.AbstractDispatcherServletInitializer
  * @see org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer
  */
+//spring 3.0规范重写它可以从tomcat启动
+//3.0之前spring可以通过读取web.xml 创建ContextLoaderListener进行启动
 public interface WebApplicationInitializer {
 
 	/**

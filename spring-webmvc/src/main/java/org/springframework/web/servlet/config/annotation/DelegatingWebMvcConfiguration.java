@@ -40,6 +40,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
  * @since 3.1
  */
 @Configuration(proxyBeanMethods = false)
+//现DelegatingWebMvcConfiguration是WebMvcConfiurationSupport（只保证了springmvc的基本功能）类 型的
 public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 
 	private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();

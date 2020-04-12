@@ -109,6 +109,10 @@ import org.springframework.util.ReflectionUtils;
  * @see WebApplicationInitializer
  */
 @HandlesTypes(WebApplicationInitializer.class)
+//1.1)web应用启动，会创建当前Web应用导入jar包中 的 ServletContainerInitializer类的实例
+// 1.2)ServletContainerInitializer 类必须放在jar包的 META-INF/services目录 下,文件名称为 javax.servlet.ServletContainerInitializer
+// 1.3)文件的内容指向ServletContainerInitializer实现类的全路径
+//1.4)使用@HandlesTypes 在我们应用启动的时候，加载我们感兴趣的类
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
 	/**
@@ -141,15 +145,18 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
 			throws ServletException {
 
+		//创建保存感兴趣的类的集合
 		List<WebApplicationInitializer> initializers = new LinkedList<>();
 
 		if (webAppInitializerClasses != null) {
 			for (Class<?> waiClass : webAppInitializerClasses) {
 				// Be defensive: Some servlet containers provide us with invalid classes,
 				// no matter what @HandlesTypes says...
+				//判断感兴趣的类不是接口不是抽象类
 				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
 						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
 					try {
+						//通过反射创建实例并且加入到集合中
 						initializers.add((WebApplicationInitializer)
 								ReflectionUtils.accessibleConstructor(waiClass).newInstance());
 					}
@@ -167,6 +174,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 
 		servletContext.log(initializers.size() + " Spring WebApplicationInitializers detected on classpath");
 		AnnotationAwareOrderComparator.sort(initializers);
+		//循环调用集合中的感兴趣类对象的onstartup的方法
 		for (WebApplicationInitializer initializer : initializers) {
 			initializer.onStartup(servletContext);
 		}

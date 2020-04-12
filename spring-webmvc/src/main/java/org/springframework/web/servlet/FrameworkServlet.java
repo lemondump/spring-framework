@@ -526,6 +526,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		long startTime = System.currentTimeMillis();
 
 		try {
+			//初始化
 			this.webApplicationContext = initWebApplicationContext();
 			initFrameworkServlet();
 		}
@@ -587,6 +588,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		}
 		if (wac == null) {
 			// No context instance is defined for this servlet -> create a local one
+			//创建一个
 			wac = createWebApplicationContext(rootContext);
 		}
 
@@ -664,6 +666,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		if (configLocation != null) {
 			wac.setConfigLocation(configLocation);
 		}
+		//refresh的入口
 		configureAndRefreshWebApplicationContext(wac);
 
 		return wac;
@@ -698,6 +701,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 
 		postProcessWebApplicationContext(wac);
 		applyInitializers(wac);
+		//spring启动流程那一套
 		wac.refresh();
 	}
 
